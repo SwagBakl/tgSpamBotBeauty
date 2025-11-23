@@ -389,4 +389,21 @@ async def main():
 
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    # Загружаем чёрный список
+    load_blacklist()
+
+    app = ApplicationBuilder().token(BOT_TOKEN).build()
+
+    app.add_handler(CommandHandler("add_blacklist", add_blacklist))
+    app.add_handler(CommandHandler("remove_blacklist", remove_blacklist))
+    app.add_handler(CommandHandler("blacklist", list_blacklist))
+
+    app.add_handler(
+        MessageHandler(
+            (filters.TEXT | filters.Caption()) & ~filters.COMMAND,
+            handle_message,
+        )
+    )
+
+    # ВАЖНО: запускаем без asyncio.run()
+    app.run_polling(close_loop=False)
