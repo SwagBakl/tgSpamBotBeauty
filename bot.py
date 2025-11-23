@@ -4,6 +4,8 @@ import re
 import json
 from pathlib import Path
 import os
+import threading
+from http.server import HTTPServer, BaseHTTPRequestHandler
 
 from telegram import Update
 from telegram.constants import ChatType
@@ -411,5 +413,5 @@ if __name__ == "__main__":
         )
     )
 
-    # Запуск бота (важно: без asyncio.run!)
+    # Запуск бота (без asyncio.run!)
     app.run_polling(close_loop=False)
