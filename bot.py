@@ -389,15 +389,21 @@ async def main():
 
 
 if __name__ == "__main__":
-    # Загружаем чёрный список
+    # Перед стартом загружаем чёрный список
     load_blacklist()
 
+    # Запускаем HTTP сервер в отдельном потоке (для Render)
+    threading.Thread(target=run_http_server, daemon=True).start()
+
+    # Настройка Telegram Application
     app = ApplicationBuilder().token(BOT_TOKEN).build()
 
+    # Команды
     app.add_handler(CommandHandler("add_blacklist", add_blacklist))
     app.add_handler(CommandHandler("remove_blacklist", remove_blacklist))
     app.add_handler(CommandHandler("blacklist", list_blacklist))
 
+    # Обработка сообщений
     app.add_handler(
         MessageHandler(
             (filters.TEXT | filters.Caption()) & ~filters.COMMAND,
@@ -405,5 +411,5 @@ if __name__ == "__main__":
         )
     )
 
-    # ВАЖНО: запускаем без asyncio.run()
+    # Запуск бота (важно: без asyncio.run!)
     app.run_polling(close_loop=False)
